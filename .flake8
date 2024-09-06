@@ -1,0 +1,8 @@
+[flake8]
+format = pylint
+extend-exclude = *.pyc, *migrations*, venv, .venv, env
+max-line-length = 100
+max-complexity = 10
+select = C,E,F,W,B,B950
+ignore = E121, E123, E126, W503, E203, E24, E501, E704, W504, F541
+per-file-ignores = src/**/__init__.py:F401,F403,E402

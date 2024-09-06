@@ -1,0 +1,47 @@
+repos:
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v4.5.0
+    hooks:
+      - id: check-case-conflict
+      - id: check-executables-have-shebangs
+      - id: check-merge-conflict
+      - id: check-symlinks
+      - id: trailing-whitespace
+        exclude: ".*json$|.*txt$|.*csv|.*md"
+      - id: no-commit-to-branch
+        args: ['--branch', 'main']
+      - id: check-ast
+      - id: end-of-file-fixer
+        exclude_types: [svg]
+      - id: check-added-large-files
+      - id: debug-statements
+
+  - repo: local
+    hooks:
+      - id: black
+        name: black
+        entry: black
+        language: system
+        types: [python]
+      - id: isort
+        name: isort
+        entry: isort
+        language: system
+        types: [python]
+      - id: flake8
+        name: flake8
+        entry: flake8
+        language: system
+        types: [python]
+
+  - repo: https://github.com/python-poetry/poetry
+    rev: 1.8.2
+    hooks:
+      - id: poetry-check
+      - id: poetry-lock
+        args: ["--no-update"]
+      - id: poetry-export
+        args: ["--without-hashes", "-f", "requirements.txt", "-o", "requirements.txt"]
+      - id: poetry-export
+        name: poetry-export-dev
+        args: ["--without-hashes", "--only", "dev", "-f", "requirements.txt", "-o", "requirements-dev.txt"]
