@@ -27,4 +27,5 @@ admin.autodiscover()
 urlpatterns = [
     path("admin/", admin.site.urls),
     path("", include(("lexicon.auth.urls", "lexicon.auth"), namespace="lexicon_auth")),
+    path("", include(("lexicon.video.urls", "lexicon.video"), namespace="lexicon_video")),
 ]
