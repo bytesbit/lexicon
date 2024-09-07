@@ -1,4 +1,3 @@
-import pathlib
 from dataclasses import dataclass
 
 from django.conf import settings
@@ -8,29 +7,18 @@ from django.utils.translation import gettext_lazy as _
 from rest_framework import serializers
 from rest_framework.serializers import DjangoValidationError
 
-from lexicon.utils import bytes_to_mb
-
 
 @dataclass
 class UploadedFileConfig:
-    # 'image', 'file', 'video', or 'audio'
     file_type: str
 
     def get_allowed_extensions(self):
-        if self.file_type == "image":
-            return ["png", "jpg", "jpeg"]
-        if self.file_type == "file":
-            return ["png", "jpeg", "jpg", "pdf", "doc", "docx", "xlsx"]
         if self.file_type == "video":
             return ["mp4", "avi", "mov", "webm"]
         if self.file_type == "audio":
             return ["mp3", "wav"]
 
     def get_allowed_max_size(self):
-        if self.file_type == "image":
-            return settings.IMAGE_FILE_UPLOAD_MAX_SIZE
-        if self.file_type == "file":
-            return settings.FILE_UPLOAD_MAX_SIZE
         if self.file_type == "video":
             return settings.VIDEO_FILE_UPLOAD_MAX_SIZE
         if self.file_type == "audio":
@@ -94,45 +82,3 @@ class FileSizeValidator:
             and self.message == other.message
             and self.code == other.code
         )
-
-
-def validate_file(data, valid_file_types, max_file_size):
-    file_name = data.name
-    file_size = data.size
-    file_ext = pathlib.PurePosixPath(file_name).suffix.strip(".").lower()
-    valid_file_types = valid_file_types
-    if file_ext not in valid_file_types:
-        raise InvalidFileType(_(f"Unsupported file format, only support {valid_file_types}"))
-    max_file_size = max_file_size
-    if file_size > max_file_size:
-        raise FileSizeLimitExceeded(
-            _(
-                "File size limit exceeded, should be less than %0.1f MB"
-                % (bytes_to_mb(max_file_size))
-            )
-        )
-    return data
-
-
-def validate_image_file(data):
-    return validate_file(
-        data,
-        valid_file_types=["png", "jpg", "jpeg"],
-        max_file_size=settings.IMAGE_FILE_UPLOAD_MAX_SIZE,
-    )
-
-
-def validate_video_file(data):
-    return validate_file(
-        data,
-        valid_file_types=["mp4", "avi", "mov", "webm"],
-        max_file_size=settings.VIDEO_FILE_UPLOAD_MAX_SIZE,
-    )
-
-
-def validate_audio_file(data):
-    return validate_file(
-        data,
-        valid_file_types=["mp3", "wav"],
-        max_file_size=settings.AUDIO_FILE_UPLOAD_MAX_SIZE,
-    )

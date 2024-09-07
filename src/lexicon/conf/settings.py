@@ -107,6 +107,7 @@ class BaseConfiguration(Configuration):
         "corsheaders",
         # Lexicon apps
         "lexicon",
+        "lexicon.video",
     ]
 
     # Application definition
@@ -222,6 +223,9 @@ class BaseConfiguration(Configuration):
     STATIC_ROOT = os.path.join(STATIC_BASE_DIR, "static")
     STATIC_URL = "/static/"
 
+    MEDIA_URL = "/media/"
+    MEDIA_ROOT = os.path.join(BASE_ROOT_DIR, "media")
+
     # Default primary key field type
     # https://docs.djangoproject.com/en/4.0/ref/settings/#default-auto-field
 
@@ -271,11 +275,9 @@ class BaseConfiguration(Configuration):
         print('Using "In-Memory" for Django Cache')
 
     # ------------------- File Storage Settings-----------------------------
-    DEFAULT_FILE_STORAGE = "storages.backends.s3boto3.S3Boto3Storage"
-    FILE_UPLOAD_MAX_SIZE = env("FILE_UPLOAD_MAX_SIZE", default=1024 * 1024 * 5)  # 5 MB
-    IMAGE_FILE_UPLOAD_MAX_SIZE = env("IMAGE_FILE_UPLOAD_MAX_SIZE", default=1024 * 1024 * 5)  # 5MB
+    # DEFAULT_FILE_STORAGE = "storages.backends.s3boto3.S3Boto3Storage"
     VIDEO_FILE_UPLOAD_MAX_SIZE = env(
-        "VIDEO_FILE_UPLOAD_MAX_SIZE", default=1024 * 1024 * 10
+        "VIDEO_FILE_UPLOAD_MAX_SIZE", default=1024 * 1024 * 400
     )  # 10 MB
 
     # --------------------- General settings----------------------------------
@@ -397,8 +399,8 @@ class BaseConfiguration(Configuration):
     }
 
     # ------------------ Page Size & Pagination Setting -----------------
-    DEFAULT_PAGINATION_PAGE_SIZE = env.int("DEFAULT_PAGINATION_PAGE_SIZE", default=10)
-    DEFAULT_PAGINATION_MAX_PAGE_SIZE = env.int("DEFAULT_PAGINATION_MAX_PAGE_SIZE", default=50)
+    DEFAULT_PAGINATION_PAGE_SIZE = env.int("DEFAULT_PAGINATION_PAGE_SIZE", default=150)
+    DEFAULT_PAGINATION_MAX_PAGE_SIZE = env.int("DEFAULT_PAGINATION_MAX_PAGE_SIZE", default=150)
 
     # ------------------ Backend Admin Site Title and Header --------------------
     BACKEND_ADMIN_SITE_TITLE = env("BACKEND_ADMIN_SITE_TITLE", default="Lexicon Admin")

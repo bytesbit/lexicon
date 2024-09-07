@@ -114,3 +114,6 @@ tf_open_cv/
 
 # Celery files
 celerybeat-schedule
+
+# Local storage
+media/
