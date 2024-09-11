@@ -275,10 +275,10 @@ class BaseConfiguration(Configuration):
         print('Using "In-Memory" for Django Cache')
 
     # ------------------- File Storage Settings-----------------------------
-    # DEFAULT_FILE_STORAGE = "storages.backends.s3boto3.S3Boto3Storage"
+    FILE_UPLOAD_MAX_SIZE = env("FILE_UPLOAD_MAX_SIZE", default=1024 * 1024 * 10)  # 10 MB
     VIDEO_FILE_UPLOAD_MAX_SIZE = env(
         "VIDEO_FILE_UPLOAD_MAX_SIZE", default=1024 * 1024 * 400
-    )  # 10 MB
+    )  # 400 MB
 
     # --------------------- General settings----------------------------------
     API_ROOT_URL = env("API_ROOT_URL", default="http://127.0.0.1:8000")

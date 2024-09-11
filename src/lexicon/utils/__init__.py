@@ -1,16 +1,12 @@
 import base64
 import datetime
 import hashlib
-import io
 import json
 import mimetypes
 from enum import Enum
 from typing import Any, Dict, Type
 from urllib.parse import parse_qs, urlencode, urlsplit, urlunsplit
 
-import jsonschema
-import pdfkit
-import stringcase
 import yaml
 from rest_framework.utils import encoders
 from rest_framework.utils.serializer_helpers import ReturnDict
@@ -203,24 +199,6 @@ def validate_yaml_string(input_string):
     return errors
 
 
-def validate_yaml_with_schema(value_str: str, schema_str: str):
-    """
-    Validate the given YAML instance against the YAML schema.
-
-    Parameters:
-        value_str (str): The YAML instance as a string.
-        schema_str (str): The YAML schema as a string.
-    """
-    if not (value_str and schema_str):
-        return
-    try:
-        value = yaml.safe_load(value_str)
-        schema = yaml.safe_load(schema_str)
-        jsonschema.validate(value, schema)
-    except jsonschema.exceptions.ValidationError as e:
-        raise e
-
-
 def returndict_to_dict(returndict):
     """
     Convert a ReturnDict object to a standard Python dictionary.
@@ -239,34 +217,6 @@ def returndict_to_dict(returndict):
         '"returndict" should be an ' 'instance of "ReturnDict" class'
     )
     return json.loads(json.dumps(returndict, cls=encoders.JSONEncoder))
-
-
-def to_snakecase(value: str):
-    """
-    Convert a snake case string to snake_case.
-
-    Args:
-        value (str): The input string
-
-    Returns:
-        str: The converted string in snakecase.
-    """
-    return stringcase.snakecase(value)
-
-
-def render_string_to_pdf(html_string: str) -> io.BytesIO:
-    """
-    Render and return a PDF file containing details from HTML string.
-
-    Parameters:
-        - html (str): The HTML content to be converted into a PDF.
-
-    Returns:
-        io.BytesIO: A BytesIO object containing the PDF file.
-    """
-    pdf_output = pdfkit.from_string(html_string, output_path=False)
-    pdf_buffer = io.BytesIO(pdf_output)
-    return pdf_buffer
 
 
 def convert_to_base64(string: str) -> str:

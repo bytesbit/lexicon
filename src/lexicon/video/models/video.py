@@ -1,5 +1,4 @@
 from django.db import models
-from django.utils.html import format_html
 from django.utils.translation import gettext_lazy as _
 
 from lexicon.db.models.base import DefaultFieldsModel
@@ -40,13 +39,3 @@ class Video(DefaultFieldsModel):
         Returns the URL of the video file for display in templates.
         """
         return self.video_file.url if self.video_file else None
-
-    def admin_thumbnail(self):
-        """
-        Returns a small video thumbnail for use in the Django admin list view.
-        """
-        if self.video_file:
-            return format_html(
-                f'<video width="100" controls><source src="{self.get_video_url()}" type="video/mp4">Your browser does not support video tag.</video>'
-            )
-        return _("No Video")

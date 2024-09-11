@@ -13,7 +13,5 @@ class BaseTask(TransactionAwareTaskMixin, Task):
 
 app = Celery("lexicon", task_cls="lexicon.celery:BaseTask")
 
-# Using a string here means the worker will not have to
-# pickle the object when using Windows.
 app.config_from_object("django.conf:settings", namespace="CELERY")
 app.autodiscover_tasks(lambda: settings.INSTALLED_APPS)

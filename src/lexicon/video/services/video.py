@@ -4,12 +4,15 @@ from django.core.files.uploadedfile import UploadedFile
 from django.utils.translation import gettext_lazy as _
 from rest_framework import serializers
 
+from lexicon.video.extraction import process_video
 from lexicon.video.models import Video
 
 logger = logging.getLogger(__name__)
 
 
-def create_video_entity(title: str, video_file: UploadedFile, description: str) -> Video:
+def create_video_entity(
+    title: str, video_file: UploadedFile, description: str, language: str
+) -> Video:
     """
     Creates a new video entity in the database with the given title, video file, and description.
 
@@ -31,5 +34,10 @@ def create_video_entity(title: str, video_file: UploadedFile, description: str) 
     video = Video.objects.create(title=title, description=description, video_file=video_file)
 
     logger.info("Video created successfully with title: '%s'", title)
+
+    if language not in ["eng", "kor", "ger"]:
+        raise serializers.ValidationError(_("Please select valid language"))
+
+    process_video(video.id, language=language)
 
     return video
