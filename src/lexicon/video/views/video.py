@@ -13,9 +13,9 @@ from lexicon.video.services.video import create_video_entity
 logger = logging.getLogger(__name__)
 
 
-class UploadAndListView(GenericAPIView):
+class VideoPageListView(GenericAPIView):
     """
-    View for rendering the video upload and list page.
+    View for rendering the video list page.
     """
 
     template_name = "video/list.html"
@@ -49,6 +49,7 @@ class VideoListCreateView(
         title = serializers.CharField(max_length=255)
         description = serializers.CharField(max_length=200, required=False)
         video_file = serializers.FileField()
+        language = serializers.ChoiceField(choices=["eng", "kor", "ger"])
 
         def validate(self, attrs):
             file_config = UploadedFileConfig(file_type="video")
@@ -96,6 +97,7 @@ class VideoListCreateView(
                 title=data["title"],
                 description=data.get("description"),
                 video_file=data["video_file"],
+                language=data["language"],
             )
             logger.info(f"Video '{data['title']}' uploaded successfully.")
             return self.success_response(

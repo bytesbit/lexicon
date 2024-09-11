@@ -1,13 +1,10 @@
 import logging
 from functools import wraps
-from typing import Union
 
 from celery import shared_task
 from celery._state import get_current_task
-from sentry_sdk import configure_scope
 
 from lexicon.celery import app
-from lexicon.models import User
 
 __all__ = (
     "instrumented_task",
@@ -17,43 +14,29 @@ __all__ = (
 logger = logging.getLogger(__name__)
 
 
-def get_task_actor(actor) -> Union[User, None]:
-    if isinstance(actor, User):
-        return actor
-    pk_value = User._meta.pk.to_python(actor)
-    try:
-        return User.objects.get(pk=pk_value)
-    except User.DoesNotExist:
-        return None
+def instrumented_task(name: str, **task_kwargs):
+    """
+    A decorator for creating instrumented Celery tasks with actor tracking and logging.
 
+    This decorator wraps the task function, logs task execution, and tracks the actor
+    (if provided) for better monitoring and debugging, including sentry integration.
 
-def instrumented_task(name, **task_kwargs):
-    # set serializer to pickle for below actor support
+    Args:
+        name (str): The name of the Celery task.
+        **task_kwargs: Additional arguments to pass to the Celery task.
+
+    Returns:
+        function: The wrapped task function.
+    """
     task_kwargs.setdefault("serializer", "pickle")
 
     def wrapped(func):
         @wraps(func)
         def _wrapped(*args, **kwargs):
             task = get_current_task()
-            logger.debug(f"running task : {task.name}[{task.request.id}]")
-            # if actor is passed by task caller then actor details
-            # will be logged in sentry event's context (if
-            # raised any), for tracking the owner of celery task
-            actor = get_task_actor(kwargs.pop("actor", None))
-            if actor:
-                logger.debug(f"setting actor in task kwargs and sentry : {actor}")
-                kwargs["actor"] = actor
-                with configure_scope() as scope:
-                    scope.set_user(
-                        {
-                            "id": actor.id,
-                            "email": actor.email,
-                            "username": actor.username,
-                        }
-                    )
-
+            logger.debug(f"Running task: {task.name}[{task.request.id}]")
             result = func(*args, **kwargs)
-            logger.debug(f"task completed : {task.name}[{task.request.id}]")
+            logger.debug(f"Task completed: {task.name}[{task.request.id}]")
             return result
 
         return app.task(name=name, **task_kwargs)(_wrapped)
