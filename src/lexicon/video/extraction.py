@@ -8,6 +8,8 @@ from django.core.cache import cache
 from django.core.exceptions import ObjectDoesNotExist
 from django.db import transaction
 
+from lexicon.tasks.base import instrumented_task
+
 from .models import Subtitle, Video
 
 logger = logging.getLogger(__name__)
@@ -147,7 +149,7 @@ class VideoProcessor:
             # self.clean_up()
 
 
-# @instrumented_task
+@instrumented_task(name="lexicon.video.extraction.process_video")
 def process_video(video_id, language=None):
     """
     Celery task to process a video asynchronously.

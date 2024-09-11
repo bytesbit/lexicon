@@ -38,6 +38,6 @@ def create_video_entity(
     if language not in ["eng", "kor", "ger"]:
         raise serializers.ValidationError(_("Please select valid language"))
 
-    process_video(video.id, language=language)
+    process_video.delay(video.id, language)
 
     return video
