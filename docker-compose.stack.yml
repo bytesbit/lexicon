@@ -1,0 +1,33 @@
+version: "3.1"
+
+services:
+  api:
+    build: ./
+    image: lexicon:latest
+    command: ["python", "manage.py", "runserver"]
+    secrets:
+      - source: lexicon-env-secret
+        target: lexicon/.env.development
+    environment:
+      - development
+    expose:
+      - "5000"
+
+  worker:
+    build: ./
+    image: lexicon:latest
+    command: ["celery", "-A","lexicon", "worker" ,"-l info"]
+    secrets:
+      - source: lexicon-env-secret
+        target: lexicon/.env.development
+    environment:
+      - development
+
+
+
+secrets:
+  lexicon-env-secret:
+    file: /home/arun/lexicon/.env.development
+
+volumes:
+  static_volume:
