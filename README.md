@@ -1,5 +1,9 @@
 ## Lexicon
 
+---
+**About Lexixon Word** : [About Lexicon Word](https://en.wikipedia.org/wiki/Lexicon)
+---
+
 **Lexicon** is an advanced application that integrates language processing with video content, enabling a seamless combination of subtitles with video playback. The primary functionality of Lexicon allows users to upload videos, after which the backend processes these files to extract subtitles and store them in a database. When the video is played, the corresponding subtitles are integrated with the video, providing a synchronized playback experience.
 
 Key features of Lexicon include:
@@ -24,6 +28,26 @@ Before setting up Lexicon, ensure you have the following software and versions i
 6. **Redis** (v4.3+) — For task queuing and caching.
 
 ---
+
+## Services Stack for development :
+
+To ease a local development, in the project root directory, we have docker compose based `docker-compose.stack.yml` 
+file. All required services we need for running this project like postgres, redis etc. have mentioned in it.
+You should also install [docker](https://www.docker.com/) and [docker-compose](https://docs.docker.com/compose/) in your machine and setup them.
+
+Go to the project root directory, and simply run following command to up and down stack services.
+
+* To start all services in background
+
+    ```bash
+    docker-compose -f docker-compose.stack.yml up -d
+    ```
+
+* To shutdown all running services
+
+    ```bash
+    docker-compose -f docker-compose.stack.yml down
+    ```
 
 ## Setting Up PostgreSQL Database
 
@@ -172,3 +196,23 @@ Celery is used to handle asynchronous tasks, such as processing video uploads an
 ```bash
 celery -A lexicon worker -l info
 ```
+
+---
+
+## Useful Links
+
+Here are some useful links to help you set up dependencies and tools:
+
+1. **FFmpeg**: [Download FFmpeg](https://www.ffmpeg.org/download.html)
+2. **Poetry**: [Poetry Documentation](https://python-poetry.org/docs/)
+3. **PostgreSQL**: [PostgreSQL Installation Guide](https://www.devart.com/dbforge/postgresql/how-to-install-postgresql-on-linux/)
+4. **Redis**: [Redis Documentation](https://redis.io/documentation)
+5. **Celery**: [Celery Documentation](https://docs.celeryq.dev/en/stable/)
+
+---
+
+## Issues
+
+Please create an issue if you find any difficulties setting up or running the project. [Raise Issue](https://github.com/bytesbit/lexicon/issues/new).
+
+Let me know if you'd like further adjustments!
